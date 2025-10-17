@@ -64,4 +64,9 @@ public class CardEntity {
     public void moveTo(ColumnEntity newColumn) {
         this.column = newColumn;
     }
+
+    // CC: Intention-revealing — domain change via a named method.
+    public void assignTo(String assignee) {
+        this.assignee = assignee;
+    }
 }

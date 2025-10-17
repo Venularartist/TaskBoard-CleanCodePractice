@@ -1,8 +1,13 @@
 package com.ven.taskboard.card.service;
 
-import com.ven.taskboard.card.builder.CardBuilder;
+import com.ven.taskboard.card.assign.AssignmentPolicy;
+import com.ven.taskboard.card.assign.AssignmentStrategyFactory; // Factory
+import com.ven.taskboard.card.builder.CardBuilder;             // Builder
 import com.ven.taskboard.common.NotFoundException;
+import com.ven.taskboard.notify.bridge.CardAssignedNotification; // Bridge (Notification abstraction)
+import com.ven.taskboard.notify.bridge.NotificationChannel;      // Bridge Implementor (decorated)
 import com.ven.taskboard.persistence.*;
+import com.ven.taskboard.web.dto.AssignCardRequest;
 import com.ven.taskboard.web.dto.CreateCardRequest;
 import com.ven.taskboard.web.dto.MoveCardRequest;
 import org.springframework.stereotype.Service;
@@ -15,10 +20,17 @@ public class CardService {
 
     private final CardRepository cards;
     private final ColumnRepository columns;
+    private final AssignmentStrategyFactory strategies;     // Factory selection point
+    private final NotificationChannel notificationChannel;  // Injected channel (may yet be decorated)
 
-    public CardService(CardRepository cards, ColumnRepository columns) {
+    public CardService(CardRepository cards,
+                       ColumnRepository columns,
+                       AssignmentStrategyFactory strategies,
+                       NotificationChannel notificationChannel) {
         this.cards = cards;
         this.columns = columns;
+        this.strategies = strategies;
+        this.notificationChannel = notificationChannel;
     }
 
     @Transactional
@@ -26,7 +38,7 @@ public class CardService {
         ColumnEntity column = columns.findById(req.columnId())
                 .orElseThrow(() -> new NotFoundException("Column not found: " + req.columnId()));
 
-        CardEntity card = new CardBuilder()
+        var card = new CardBuilder()
                 .in(column)
                 .title(req.title())
                 .description(req.description())
@@ -35,18 +47,43 @@ public class CardService {
                 .labels(req.labels())
                 .build();
 
-//        column.addCard(card);
+        // Owning side of @ManyToOne persists relation
         cards.save(card);
         return card.getId();
     }
 
     @Transactional
     public void move(UUID cardId, MoveCardRequest req) {
-        CardEntity card = cards.findById(cardId)
+        var card = cards.findById(cardId)
                 .orElseThrow(() -> new NotFoundException("Card not found: " + cardId));
-        ColumnEntity dest = columns.findById(req.toColumnId())
-                .orElseThrow(() -> new NotFoundException("Destination column not found: " + req.toColumnId()));
+
+        UUID destId = req.toColumnId();
+        var dest = columns.findById(destId)
+                .orElseThrow(() -> new NotFoundException("Destination column not found: " + destId));
+
         card.moveTo(dest);
         cards.save(card);
+    }
+
+    @Transactional
+    public void assign(UUID cardId, AssignCardRequest req) {
+        var card = cards.findById(cardId)
+                .orElseThrow(() -> new NotFoundException("Card not found: " + cardId));
+
+        // If explicit assignee provided, use it; otherwise select via policy
+        String assignee;
+        if (req.assignee() != null && !req.assignee().isBlank()) {
+            assignee = req.assignee();
+        } else {
+            AssignmentPolicy policy = (req.policy() != null) ? req.policy() : AssignmentPolicy.ROUND_ROBIN;
+            var board = card.getColumn().getBoard();
+            assignee = strategies.get(policy).pickAssignee(board, card); // GoF: Factory → Strategy
+        }
+
+        card.assignTo(assignee);
+        cards.save(card);
+
+        // Bridge + Adapter (+ Decorator if configured) — send notification via channel
+        new CardAssignedNotification(notificationChannel, card).dispatch(assignee);
     }
 }
