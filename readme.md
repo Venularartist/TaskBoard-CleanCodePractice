@@ -207,7 +207,7 @@ Invoke-RestMethod -Method POST "$base/api/cards/$cardId/assign" -ContentType "ap
 
 # Project Structure 
 
-com.ven.taskboard
+```com.ven.taskboard
 ├─ board/
 │   ├─ api/          # BoardService
 │   ├─ composite/    # BoardTreeAssembler  ← Composite
@@ -223,3 +223,4 @@ com.ven.taskboard
 ├─ persistence/      # JPA entities & Spring Data repositories
 ├─ web/              # Controllers, DTOs
 └─ config/           # NotificationConfig wiring decorators
+```
