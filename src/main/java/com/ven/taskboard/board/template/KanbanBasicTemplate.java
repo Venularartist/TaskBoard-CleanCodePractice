@@ -5,6 +5,13 @@ import org.springframework.stereotype.Component;
 
 // Prototype — this template acts as a prototype for new boards.
 // BoardService clones a fresh BoardEntity with default columns from here.
+
+//builds a new BoardEntity pre-populated with three columns:
+
+//"To Do" (wipLimit 0, order 1)
+//"In Progress" (wipLimit 3, order 2)
+//"Done" (wipLimit 0, order 3)
+
 @Component
 public class KanbanBasicTemplate implements BoardTemplate {
 

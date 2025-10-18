@@ -38,7 +38,7 @@ public class CardService {
         ColumnEntity column = columns.findById(req.columnId())
                 .orElseThrow(() -> new NotFoundException("Column not found: " + req.columnId()));
 
-        var card = new CardBuilder()
+        var card = new CardBuilder() // Builder użycie
                 .in(column)
                 .title(req.title())
                 .description(req.description())
@@ -77,13 +77,13 @@ public class CardService {
         } else {
             AssignmentPolicy policy = (req.policy() != null) ? req.policy() : AssignmentPolicy.ROUND_ROBIN;
             var board = card.getColumn().getBoard();
-            assignee = strategies.get(policy).pickAssignee(board, card); // GoF: Factory → Strategy
+            assignee = strategies.get(policy).pickAssignee(board, card); // Użycie Factory
         }
 
         card.assignTo(assignee);
         cards.save(card);
 
-        // Bridge + Adapter (+ Decorator if configured) — send notification via channel
+        // Bridge użycie (+ Decorator if configured) — send notification via channel
         new CardAssignedNotification(notificationChannel, card).dispatch(assignee);
     }
 }

@@ -2,7 +2,14 @@ package com.ven.taskboard.notify.decorator;
 
 import com.ven.taskboard.notify.bridge.NotificationChannel;
 
-// Decorator — resiliency via simple retries.
+// Decorator
+
+// adds additional behavior to this class without bloating it
+
+// Wraps another NotificationChannel and retries send(...)
+// up to maxRetries times on RuntimeException, then rethrows.
+//
+
 public class RetryingNotificationChannel implements NotificationChannel {
     private final NotificationChannel delegate;
     private final int maxRetries;

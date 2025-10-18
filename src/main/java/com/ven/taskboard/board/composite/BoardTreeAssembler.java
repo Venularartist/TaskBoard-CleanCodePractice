@@ -7,7 +7,14 @@ import java.util.Arrays;
 import java.util.List;
 
 // Composite (read side) — we treat Board → Columns → Cards as a tree and
-// traverse it uniformly to produce a DTO hierarchy for /boards/{id}/tree.
+
+// The UI needs the whole board at once: Board → Columns → Cards
+
+// instead of making the caller stitch them together we make the nececarry calls and return a single object
+
+// toDto(BoardEntity board)
+
+// GET /api/boards/{boardId}/tree → BoardService#getTree (assembler)
 
 public class BoardTreeAssembler {
 

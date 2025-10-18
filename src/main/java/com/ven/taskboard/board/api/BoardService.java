@@ -43,7 +43,7 @@ public class BoardService {
                 .orElseThrow(() -> new NotFoundException("Board not found: " + boardId));
         // force-load collections if LAZY (optional; JPA/Hibernate usually loads on access)
         board.getColumns().forEach(c -> c.getCards().size());
-        return BoardTreeAssembler.toDto(board);
+        return BoardTreeAssembler.toDto(board); //Użycie Composite
     }
 
     @Transactional

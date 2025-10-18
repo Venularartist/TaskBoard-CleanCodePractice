@@ -6,7 +6,15 @@ import com.ven.taskboard.persistence.ColumnEntity;
 import java.time.LocalDate;
 import java.util.List;
 
-// Builder — step-by-step construction of CardEntity with validation.
+// Builder
+
+// Performs construction of CardEntity with validation
+
+// Used in column, title, desc, labels
+
+// fill in what you have, step by step, then build() once
+
+// When POST/api/cards -> CardService#create uses builder to produce a valid CardEntity
 
 public class CardBuilder {
     private ColumnEntity column;

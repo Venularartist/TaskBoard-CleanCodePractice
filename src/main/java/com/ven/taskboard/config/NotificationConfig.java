@@ -25,6 +25,6 @@ public class NotificationConfig {
             default -> console;
         };
         NotificationChannel logged = new LoggingNotificationChannel(base);
-        return new RetryingNotificationChannel(logged, 2);
+        return new RetryingNotificationChannel(logged, 2); //Decorator użycie
     }
 }
