@@ -16,14 +16,20 @@ import java.util.Map;
 // POST /api/cards/{id}/assign without an explicit assignee → CardService#assign calls
 // strategies.get(policy).pickAssignee(...).
 
+
 @Component
 public class AssignmentStrategyFactory {
 
     private final Map<AssignmentPolicy, AssignmentStrategy> byPolicy = new EnumMap<>(AssignmentPolicy.class);
 
-    public AssignmentStrategyFactory(RoundRobinAssignment rr /*, SkillBasedAssignment sb, LeastLoadAssignment ll */) {
-        byPolicy.put(AssignmentPolicy.ROUND_ROBIN, rr);
-        // add more when implemented
+    public AssignmentStrategyFactory(
+            RoundRobinAssignment rr,
+            SkillBasedAssignment sb,
+            LeastLoadAssignment ll
+    ) {
+        byPolicy.put(AssignmentPolicy.ROUND_ROBIN, rr); //Strategy użycie
+        byPolicy.put(AssignmentPolicy.SKILL_BASED, sb); //Strategy użycie
+        byPolicy.put(AssignmentPolicy.LEAST_LOAD, ll); //Strategy użycie
     }
 
     public AssignmentStrategy get(AssignmentPolicy policy) {
@@ -32,3 +38,22 @@ public class AssignmentStrategyFactory {
         return s;
     }
 }
+
+
+//old
+//@Component
+//public class AssignmentStrategyFactory {
+//
+//    private final Map<AssignmentPolicy, AssignmentStrategy> byPolicy = new EnumMap<>(AssignmentPolicy.class);
+//
+//    public AssignmentStrategyFactory(RoundRobinAssignment rr /*, SkillBasedAssignment sb, LeastLoadAssignment ll */) {
+//        byPolicy.put(AssignmentPolicy.ROUND_ROBIN, rr);
+//        // add more when implemented
+//    }
+//
+//    public AssignmentStrategy get(AssignmentPolicy policy) {
+//        AssignmentStrategy s = byPolicy.get(policy);
+//        if (s == null) throw new IllegalArgumentException("No strategy for policy: " + policy);
+//        return s;
+//    }
+//}
