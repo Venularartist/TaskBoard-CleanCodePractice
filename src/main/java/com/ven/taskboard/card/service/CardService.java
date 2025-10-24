@@ -7,6 +7,9 @@ import com.ven.taskboard.card.service.command.AssignCardCommand;
 import com.ven.taskboard.card.service.command.CommandExecutor;
 import com.ven.taskboard.card.service.command.CreateCardCommand;
 import com.ven.taskboard.card.service.command.MoveCardCommand;
+import com.ven.taskboard.card.service.template.AssignCardOperation;
+import com.ven.taskboard.card.service.template.CreateCardOperation;
+import com.ven.taskboard.card.service.template.MoveCardOperation;
 import com.ven.taskboard.common.NotFoundException;
 import com.ven.taskboard.notify.bridge.CardAssignedNotification; // Bridge (Notification abstraction)
 import com.ven.taskboard.notify.bridge.NotificationChannel;      // Bridge Implementor (decorated)
@@ -20,9 +23,14 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.UUID;
 
 
+//Command – kapsułuje akcję (AssignCardCommand, MoveCardCommand, CreateCardCommand)
+//
+//Template Method – definiuje szczegółowy algorytm (AssignCardOperation, itd.)
+//
+//CardService – wywołuje komendy przez CommandExecutor.
+
 @Service
 public class CardService {
-    //Command is a behavioral design pattern that turns a request into a stand-alone object that contains all information about the request.
 
     private final CardRepository cards;
     private final ColumnRepository columns;
@@ -44,19 +52,35 @@ public class CardService {
 
     @Transactional
     public UUID create(CreateCardRequest req) {
-        return executor.execute(new CreateCardCommand(req, cards, columns)); //Command użycie
+        return executor.execute(new CreateCardCommand(cards, columns, req));
     }
 
     @Transactional
     public void move(UUID cardId, MoveCardRequest req) {
-        executor.execute(new MoveCardCommand(cardId, req, cards, columns)); //Command użycie
+        executor.execute(new MoveCardCommand(cards, columns, cardId, req));
     }
 
     @Transactional
     public void assign(UUID cardId, AssignCardRequest req) {
-        executor.execute(new AssignCardCommand(cardId, req, cards, strategies, notificationChannel)); //Command użycie
+        executor.execute(new AssignCardCommand(cards, cardId, req, strategies, notificationChannel));
     }
 }
+
+//    @Transactional
+//    public UUID create(CreateCardRequest req) {
+//        return executor.execute(new CreateCardCommand(req, cards, columns)); //Command użycie
+//    }
+//
+//    @Transactional
+//    public void move(UUID cardId, MoveCardRequest req) {
+//        executor.execute(new MoveCardCommand(cardId, req, cards, columns)); //Command użycie
+//    }
+//
+//    @Transactional
+//    public void assign(UUID cardId, AssignCardRequest req) {
+//        executor.execute(new AssignCardCommand(cardId, req, cards, strategies, notificationChannel)); //Command użycie
+//    }
+
 
 //@Service
 //public class CardService {
