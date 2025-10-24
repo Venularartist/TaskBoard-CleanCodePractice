@@ -1,5 +1,8 @@
 package com.ven.taskboard.board.api;
 
+import com.ven.taskboard.board.iterator.IterableBoard;
+import com.ven.taskboard.board.iterator.IterableColumn;
+import com.ven.taskboard.board.iterator.Iterator;
 import com.ven.taskboard.board.template.TemplateRegistry;
 import com.ven.taskboard.common.NotFoundException;
 import com.ven.taskboard.persistence.*;
@@ -58,4 +61,30 @@ public class BoardService {
 
     @Transactional(readOnly = true)
     public long countBoards() { return boards.count(); }
+
+    //Iterator użycie
+    @Transactional(readOnly = true)
+    public void printAllCards(UUID boardId) {
+        BoardEntity board = boards.findById(boardId)
+                .orElseThrow(() -> new NotFoundException("Board not found: " + boardId));
+
+        //IterableBoard → BoardIterator
+        IterableBoard iterableBoard = new IterableBoard(board);
+        Iterator<ColumnEntity> colIter = iterableBoard.createIterator();
+
+        while (colIter.hasNext()) {
+            ColumnEntity column = colIter.next();
+            System.out.println("Column: " + column.getName());
+
+            //IterableColumn → ColumnIterator
+            IterableColumn iterableColumn = new IterableColumn(column);
+            Iterator<CardEntity> cardIter = iterableColumn.createIterator();
+
+            while (cardIter.hasNext()) {
+                CardEntity card = cardIter.next();
+                System.out.println("   - Card: " + card.getTitle());
+            }
+        }
+    }
+
 }
