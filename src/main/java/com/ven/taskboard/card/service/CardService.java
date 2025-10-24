@@ -13,6 +13,8 @@ import com.ven.taskboard.card.service.template.MoveCardOperation;
 import com.ven.taskboard.common.NotFoundException;
 import com.ven.taskboard.notify.bridge.CardAssignedNotification; // Bridge (Notification abstraction)
 import com.ven.taskboard.notify.bridge.NotificationChannel;      // Bridge Implementor (decorated)
+import com.ven.taskboard.notify.observer.CardSubject;
+import com.ven.taskboard.notify.observer.NotificationObserver;
 import com.ven.taskboard.persistence.*;
 import com.ven.taskboard.web.dto.AssignCardRequest;
 import com.ven.taskboard.web.dto.CreateCardRequest;
@@ -50,21 +52,65 @@ public class CardService {
         this.executor = executor;
     }
 
+
+    // Command + Template (Create) użycie
+
     @Transactional
     public UUID create(CreateCardRequest req) {
         return executor.execute(new CreateCardCommand(cards, columns, req));
     }
+
+
+    // Command + Template (Move) użycie
 
     @Transactional
     public void move(UUID cardId, MoveCardRequest req) {
         executor.execute(new MoveCardCommand(cards, columns, cardId, req));
     }
 
+
+    // Strategy + Observer + Adapter/Bridge użycie
+
     @Transactional
     public void assign(UUID cardId, AssignCardRequest req) {
-        executor.execute(new AssignCardCommand(cards, cardId, req, strategies, notificationChannel));
+        // Pobranie karty
+        CardEntity card = cards.findById(cardId)
+                .orElseThrow(() -> new NotFoundException("Card not found: " + cardId));
+
+
+        // Strategy: wybór assignee
+        String assignee = (req.assignee() != null && !req.assignee().isBlank())
+                ? req.assignee()
+                : strategies.get(req.policy() != null ? req.policy() : AssignmentPolicy.ROUND_ROBIN)
+                .pickAssignee(card.getColumn().getBoard(), card);
+
+        card.assignTo(assignee);
+        cards.save(card);
+
+
+        // Observer użycie
+
+        CardSubject subject = new CardSubject(card.getId());
+
+        // Tworzymy obserwatora dla kanału NotificationChannel (Adapter/Bridge)
+        NotificationObserver observer = new NotificationObserver(
+                notificationChannel,
+                assignee,
+                "Card Assigned"
+        );
+        subject.attach(observer);
+
+        // Wywołanie powiadomienia
+        subject.notifyObservers("Card " + card.getTitle() + " has been assigned to " + assignee);
     }
 }
+
+
+//    @Transactional
+//    public void assign(UUID cardId, AssignCardRequest req) {
+//        executor.execute(new AssignCardCommand(cards, cardId, req, strategies, notificationChannel));
+//    }
+
 
 //    @Transactional
 //    public UUID create(CreateCardRequest req) {
