@@ -5,7 +5,7 @@ import com.ven.taskboard.persistence.ColumnEntity;
 
 public class IterableBoard implements IterableCollection<ColumnEntity> {
 
-    private final BoardEntity board;
+    protected final BoardEntity board;
 
     public IterableBoard(BoardEntity board) {
         this.board = board;

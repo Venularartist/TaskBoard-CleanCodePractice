@@ -4,11 +4,12 @@ import com.ven.taskboard.persistence.BoardEntity;
 import com.ven.taskboard.persistence.ColumnEntity;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 public class BoardIterator implements Iterator<ColumnEntity> {
 
-    private final List<ColumnEntity> columns;
-    private int position = 0;
+    protected final List<ColumnEntity> columns;
+    protected int position = 0;
 
     public BoardIterator(BoardEntity board) {
         this.columns = board.getColumns();
@@ -22,7 +23,7 @@ public class BoardIterator implements Iterator<ColumnEntity> {
     @Override
     public ColumnEntity next() {
         if (!hasNext()) {
-            throw new IllegalStateException("No more columns in board");
+            throw new NoSuchElementException("No more columns in board");
         }
         return columns.get(position++);
     }
