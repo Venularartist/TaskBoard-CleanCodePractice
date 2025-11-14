@@ -17,7 +17,7 @@ public class RoundRobinAssignment extends AbstractAssignmentStrategy { // extend
 
     @Override
     public String pickAssignee(BoardEntity board, CardEntity card) {
-        // #2b: instead of a private teamFor(...) method, we use the hook from the abstract base class
+        // instead of a private teamFor(...) method, we use the hook from the abstract base class
         List<String> team = defaultTeam(board);
 
         AtomicInteger idx = counters.computeIfAbsent(board.getId(), k -> new AtomicInteger(0));

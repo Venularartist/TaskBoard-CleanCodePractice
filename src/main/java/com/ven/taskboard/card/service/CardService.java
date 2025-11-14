@@ -1,5 +1,8 @@
 package com.ven.taskboard.card.service;
 
+import com.ven.taskboard.card.api.CardAssigner;
+import com.ven.taskboard.card.api.CardCreator;
+import com.ven.taskboard.card.api.CardMover;
 import com.ven.taskboard.card.assign.AssignmentPolicy;
 import com.ven.taskboard.card.assign.AssignmentStrategyFactory; // Factory
 import com.ven.taskboard.card.service.command.AssignCardCommand;
@@ -29,7 +32,7 @@ import java.util.UUID;
 // a nie od modułów niskopoziomowych (konkretne kanały/adaptery).
 
 @Service
-public class CardService {
+public class CardService implements CardCreator, CardMover, CardAssigner { //"implementacja" posegmentowanych interfejsów
 
     private final CardRepository cards;
     private final ColumnRepository columns;

@@ -19,7 +19,7 @@ import java.util.UUID;
 // If no template is provided, fall back to a plain BoardEntity.
 
 @Service
-public class BoardService {
+public class BoardService implements BoardFactory, BoardTreeReader, ColumnManager{
 
     private final BoardRepository boards;
     private final ColumnRepository columns;
