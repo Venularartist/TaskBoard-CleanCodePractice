@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 //"Done" (wipLimit 0, order 3)
 
 @Component
-public class KanbanBasicTemplate implements BoardTemplate {
+public class KanbanBasicTemplate extends AbstractBoardTemplate { // extends abstract base (DIP)
 
     @Override
     public BoardEntity create(String name) {
