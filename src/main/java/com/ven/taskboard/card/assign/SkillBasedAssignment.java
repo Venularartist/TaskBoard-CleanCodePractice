@@ -12,7 +12,7 @@ import java.util.Map;
 public class SkillBasedAssignment implements AssignmentStrategy {
     // Strategy is a behavioral design pattern that lets you define a family of algorithms, put each of them into a separate class, and make their objects interchangeable.
 
-    // "członek zespołu → lista jego umiejętności"
+    // "członek zespołu -> lista jego umiejętności"
     private static final Map<String, List<String>> SKILLS = Map.of(
             "user:karol", List.of("backend", "java", "sql"),
             "user:dev", List.of("frontend", "react", "js"),

@@ -69,7 +69,7 @@ public class CardService {
     }
 
 
-    // Strategy + Observer + Adapter/Bridge użycie
+    // Strategy + Observer + Bridge użycie
 
     @Transactional
     public void assign(UUID cardId, AssignCardRequest req) {

@@ -8,14 +8,12 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-// demo: cycles through a fixed team list per board.
 @Component
 public class RoundRobinAssignment implements AssignmentStrategy {
 
     private final Map<UUID, AtomicInteger> counters = new ConcurrentHashMap<>();
 
     private List<String> teamFor(BoardEntity board) {
-        // Later I'll add fetching team from DB; here is a stub team:
         return List.of("user:karol", "user:dev", "user:content");
     }
 
