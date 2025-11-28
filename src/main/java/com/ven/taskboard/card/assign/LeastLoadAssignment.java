@@ -27,7 +27,7 @@ public class LeastLoadAssignment implements AssignmentStrategy {
     @Override
     public String pickAssignee(BoardEntity board, CardEntity card) {
         List<String> team = teamFor(board);
-        return team.stream()
+        return team.stream() //Krystian  wykorzystanie programowania funkcyjnego w strumieniowym przetwarzaniu
                 .min(Comparator.comparingInt(u -> LOADS.getOrDefault(u, 0)))
                 .orElse("user:karol");
     }

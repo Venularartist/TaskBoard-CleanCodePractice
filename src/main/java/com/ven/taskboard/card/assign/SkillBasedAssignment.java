@@ -24,7 +24,7 @@ public class SkillBasedAssignment implements AssignmentStrategy {
         // Najbardziej dopasowany
         String description = (card.getDescription() != null) ? card.getDescription().toLowerCase() : "";
 
-        return SKILLS.entrySet().stream()
+        return SKILLS.entrySet().stream() //Krystian  wykorzystanie programowania funkcyjnego w strumieniowym przetwarzaniu
                 .filter(e -> e.getValue().stream().anyMatch(description::contains))
                 .map(Map.Entry::getKey)
                 .findFirst()
