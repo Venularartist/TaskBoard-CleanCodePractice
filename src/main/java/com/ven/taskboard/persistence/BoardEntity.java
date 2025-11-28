@@ -21,7 +21,7 @@ public class BoardEntity {
     @OrderBy("orderIndex ASC")
     private List<ColumnEntity> columns = new ArrayList<>();
 
-    protected BoardEntity() { }
+    public BoardEntity() { }
 
     public BoardEntity(String name) {
         this.name = name;

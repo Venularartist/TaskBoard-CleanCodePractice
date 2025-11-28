@@ -24,7 +24,7 @@ public class ColumnEntity {
     @OrderBy("createdAt ASC")
     private List<CardEntity> cards = new ArrayList<>();
 
-    protected ColumnEntity() { }
+    public ColumnEntity() { }
 
     public ColumnEntity(BoardEntity board, String name, int wipLimit, int orderIndex) {
         this.board = board;
@@ -40,7 +40,7 @@ public class ColumnEntity {
     public int getOrderIndex() { return orderIndex; }
     public List<CardEntity> getCards() { return cards; }
 
-    void addCard(CardEntity card) {
+    public void addCard(CardEntity card) {
         cards.add(card);
     }
 }
